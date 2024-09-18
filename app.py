@@ -11,6 +11,7 @@ import random
 nltk.download('punkt_tab')
 stemmer = LancasterStemmer()
 
+# Load the model and data
 def load_data():
     with open('data.pickle2', 'rb') as f:
         return pickle.load(f)
@@ -24,7 +25,7 @@ def load_model():
         def __init__(self, input_size, hidden_size, output_size):
             super(ChatBotModel, self).__init__()
             self.fc1 = nn.Linear(input_size, hidden_size)
-            self.fc2 = nn.Linear(hidden_size, hidden_size)  # Corrected this line
+            self.fc2 = nn.Linear(hidden_size, hidden_size)
             self.fc3 = nn.Linear(hidden_size, output_size)
             self.softmax = nn.Softmax(dim=1)
 
@@ -44,10 +45,12 @@ if not os.path.exists('data.pickle2') or not os.path.exists('model.pth'):
     st.write("⚠️ Model or data files not found. Please check the setup.")
     st.stop()
 
+# Load the data and model
 words, labels, _, _ = load_data()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = load_model()
 
+# Helper function to create a bag of words
 def bag_of_words(s, words):
     bag = [0 for _ in range(len(words))]
     s_words = nltk.word_tokenize(s)
@@ -58,34 +61,40 @@ def bag_of_words(s, words):
                 bag[i] = 1
     return np.array(bag, dtype=np.float32)
 
+# Load intents data
 with open('./indian_restaurant.json') as file:
     data = json.load(file)
 
+# Streamlit App Title
 st.title("🍽️ Restaurant Chatbot 🤖")
 
+# Initialize session state
 if 'history' not in st.session_state:
     st.session_state.history = []
 if 'welcomed' not in st.session_state:
     st.session_state.welcomed = False
 
+# User message layout (aligned to right)
 def user_message(message):
     st.markdown(f"""
         <div style="text-align: right; margin: 10px;">
-            <span style="background-color: #dcf8c6; padding: 10px; border-radius: 10px; display: inline-block; color: black;">
+            <span style="background-color: #dcf8c6; padding: 10px; border-radius: 10px; display: inline-block; color: black; max-width: 60%;">
                 {message} 😊
             </span>
         </div>
     """, unsafe_allow_html=True)
 
+# Bot message layout (aligned to left)
 def bot_message(message):
     st.markdown(f"""
         <div style="text-align: left; margin: 10px;">
-            <span style="background-color: #f1f0f0; padding: 10px; border-radius: 10px; display: inline-block; color: black;">
+            <span style="background-color: #f1f0f0; padding: 10px; border-radius: 10px; display: inline-block; color: black; max-width: 60%;">
                 {message} 🤖
             </span>
         </div>
     """, unsafe_allow_html=True)
 
+# Start conversation
 if not st.session_state.welcomed:
     welcome_prompt = st.text_input("Say 'hello' to start the conversation:", key="welcome_prompt")
     if welcome_prompt.lower() == 'hello':
@@ -95,13 +104,16 @@ if not st.session_state.welcomed:
         bot_message(welcome_response)
         st.session_state.welcomed = True
 else:
+    # Display chat history
     for entry in st.session_state.history:
         user_message(entry['user'])
         bot_message(entry['bot'])
 
+    # User input
     prompt = st.text_input("Enter your prompt:", key="conversation_prompt")
 
     if prompt:
+        # Predict class and generate response
         bag = bag_of_words(prompt, words)
         bag_tensor = torch.tensor(bag, dtype=torch.float32).unsqueeze(0).to(device)
 
@@ -111,6 +123,7 @@ else:
         results_index = torch.argmax(results).item()
         tag = labels[results_index]
 
+        # Get the response
         responses = None
         for tg in data['indian_restaurant']:
             if tg['tag'] == tag:
@@ -122,6 +135,7 @@ else:
         else:
             answer = "Sorry, I didn't understand that. 😕"
 
+        # Update chat history
         st.session_state.history.append({'user': prompt, 'bot': answer})
         user_message(prompt)
         bot_message(answer)
