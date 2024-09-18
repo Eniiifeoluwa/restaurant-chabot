@@ -7,15 +7,17 @@ from nltk.stem.lancaster import LancasterStemmer
 import json
 import pickle
 import os
+import random 
 
 # Initialize stemmer
 stemmer = LancasterStemmer()
 
-# Load preprocessed data
+
 def load_data():
     with open('data.pickle2', 'rb') as f:
         return pickle.load(f)
 
+# Load the model
 def load_model():
     input_size = len(words)
     hidden_size = 8
@@ -37,20 +39,21 @@ def load_model():
 
     model = ChatBotModel(input_size, hidden_size, output_size)
     model.load_state_dict(torch.load('model.pth', map_location=device))
+    model.to(device)  
     model.eval()
     return model
 
-# Ensure files exist
+
 if not os.path.exists('data.pickle2') or not os.path.exists('model.pth'):
     st.write("Model or data files not found. Please check the setup.")
     st.stop()
 
-# Load data and model
-words, labels, _, _ = load_data()
+
+words, labels, _, _ = load_data()  
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = load_model()
 
-# Function to convert user input to bag of words
+
 def bag_of_words(s, words):
     bag = [0 for _ in range(len(words))]
     s_words = nltk.word_tokenize(s)
@@ -61,11 +64,11 @@ def bag_of_words(s, words):
                 bag[i] = 1
     return np.array(bag, dtype=np.float32)
 
-# Load intents data
+
 with open('./indian_restaurant.json') as file:
     data = json.load(file)
 
-# Streamlit app
+
 st.title("Restaurant Chatbot")
 
 if 'history' not in st.session_state:
@@ -82,29 +85,37 @@ if not st.session_state.welcomed:
         st.write(f"**Bot😎:** {welcome_response}")
         st.session_state.welcomed = True
 else:
+    
     for entry in st.session_state.history:
         st.write(f"**User😍:** {entry['question']}")
         st.write(f"**Bot😎:** {entry['answer']}")
 
+    # Prompt for new user input
     prompt = st.text_input("Enter your prompt:", key="conversation_prompt")
 
     if prompt:
-        # Convert input to bag of words
+        
         bag = bag_of_words(prompt, words)
         bag_tensor = torch.tensor(bag, dtype=torch.float32).unsqueeze(0).to(device)
 
-        # Get model predictions
+        
         with torch.no_grad():
             model.eval()
             results = model(bag_tensor)
         results_index = torch.argmax(results).item()
         tag = labels[results_index]
 
-        # Find response for the tag
+      
+        responses = None
         for tg in data['indian_restaurant']:
             if tg['tag'] == tag:
                 responses = tg['responses']
-        answer = random.choice(responses)
+                break
+        
+        if responses:
+            answer = random.choice(responses)
+        else:
+            answer = "Sorry, I didn't understand that."
 
         st.session_state.history.append({'question': prompt, 'answer': answer})
         st.write(f"**User😍:** {prompt}")
