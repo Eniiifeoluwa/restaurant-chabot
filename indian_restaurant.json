@@ -1,0 +1,49 @@
+{"indian_restaurant": [
+         {"tag": "greeting",
+         "patterns": ["hi", "hey", "help", "hey there", "hello"],
+         "responses": ["Welcome to our new restaurant", "Good evening! How can I help you?", "Welcome to our restaurant. I am your personal assistant. How can i serve you?"],
+         "context_set": ""
+        },
+        {"tag": "open",
+         "patterns": ["When do you open", "At what time is the restaurant opened", "When do you close", "Open", "Close"],
+         "responses": ["We are open from 11am-8pm, Tuesday-Sunday. Monday is our rest day"],
+         "context_set": ""
+        },
+        {"tag": "payments",
+         "patterns": ["Can i pay with credit card", "Cash", "Google Pay", "Apple Pay", "AMEX", "Debit", "Paypal"],
+         "responses": ["We accept the following payment methods: Cash, VISA, Master, AMEX, PayPal, Apple Pay, Google Pay"],
+         "context_set": ""
+        },
+        {"tag": "food",
+         "patterns": ["menu", "food of the day", "suggestion", "recommendation", "eat"],
+         "responses": ["Today we can recommend you the Chicken Biryani Plate, you will love it :)", "Today, the restaurant chef recommends you to try the Chicken Biryani Plate",
+         "This week we recommend you to try one of the following plates: Chicken Biryani, Lamb Biryani or Chicken Tikka Masala"],
+         "context_set": ""
+        },
+        {"tag": "delivery",
+         "patterns": ["ordering", "home", "delivery"],
+         "responses": ["Food and beverages can be delivered to your home. The delivery fee is 6 $"],
+         "context_set": ""
+        },
+        {"tag": "vegetarian",
+         "patterns": ["Vegetarian", "meat"],
+         "responses": ["For our vegetarian guests we have a special vegetarian menu"],
+         "context_set": ""
+        },
+        {"tag": "alcohol",
+         "patterns": ["alcohol", "beer", "Cocktails", "wine", "spirits", "liquor", "drinks"],
+         "responses": ["We serve alcoholic beverages from 6pm", "To consume our alcoholic beverages you have to be at least 18 years old", "From our alcoholic beverages you can choose between beer, wine, wodka, ouzo, tequila and rum", "In our cocktail menu you find Sex on the Beach, Mai Tai, Long Island Iced Tea and Piña Colada"],
+         "context_set": ""
+        },
+        {"tag": "location",
+         "patterns": ["where is your restaurant?", "location", "locate", "map", "train", "car", "transport"],
+         "responses": ["Our restaurant is located inside the DeltaPalace Shopping Mall in Frankfurt. From the Central Station you can take the train (line 4 and 5). If you go by car, it takes you 5 minutes to be here"],
+         "context_set": ""
+        },
+      {"tag": "bye",
+         "patterns": ["bye", "see you", "see ya"],
+         "responses": ["We hope you are satisfied with our service. Have a good day!", "We are looking forward to welcome you again in our restaurant"],
+         "context_set": ""
+        }
+]
+}
