@@ -24,7 +24,7 @@ def load_model():
         def __init__(self, input_size, hidden_size, output_size):
             super(ChatBotModel, self).__init__()
             self.fc1 = nn.Linear(input_size, hidden_size)
-            self.fc2 = nn.Linear(hidden_size)
+            self.fc2 = nn.Linear(hidden_size, hidden_size)  # Corrected this line
             self.fc3 = nn.Linear(hidden_size, output_size)
             self.softmax = nn.Softmax(dim=1)
 
