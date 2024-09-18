@@ -8,7 +8,8 @@ import json
 import pickle
 import os
 import random 
-
+nltk.download('punkt')
+nltk.download('punkt_tab')
 # Initialize stemmer
 stemmer = LancasterStemmer()
 
